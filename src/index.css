@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+:root {
+	--font-main: "Roboto", sans-serif;
+	--color-main: rgb(52, 58, 64);
+	--color-sec: gray;
+	--text-main: #fff;
+}
+body {
+	font-family: var(--font-main);
+	background-color: var(--color-main);
+	color: var(--text-main) !important;
+}
+
+.bg-main {
+	background-color: var(--color-main);
+}
+.bg-sec {
+	background-color: var(--color-sec);
+}
+.text-main {
+	color: var(--font-main);
+}
+
+@media screen and (min-width: 1200px) {
+	.container {
+		width: 1100px;
+	}
+}
