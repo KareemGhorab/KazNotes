@@ -5,12 +5,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./index.css";
 import App from "./App";
+import { UserProvider } from "./context/userContext/UserContext.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 	<React.StrictMode>
 		<BrowserRouter>
-			<App />
+			<UserProvider>
+				<App />
+			</UserProvider>
 		</BrowserRouter>
 	</React.StrictMode>
 );

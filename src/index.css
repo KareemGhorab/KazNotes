@@ -3,7 +3,7 @@
 :root {
 	--font-main: "Roboto", sans-serif;
 	--color-main: rgb(52, 58, 64);
-	--color-sec: gray;
+	--color-sec: #666;
 	--text-main: #fff;
 }
 body {

@@ -1,11 +1,20 @@
-import React, { useReducer, useEffect, useRef, useMemo } from "react";
-import Joi from "joi";
+import React, {
+	useState,
+	useReducer,
+	useEffect,
+	useRef,
+	useMemo,
+	useCallback,
+} from "react";
 import styles from "./Login.module.css";
+import { useNavigate } from "react-router-dom";
+import Joi from "joi";
 import CustomAlert from "../../components/alert/CustomAlert";
 import usePost from "../../hooks/usePost";
-import { useCallback } from "react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+	useSetUserToken,
+	useUser,
+} from "../../context/userContext/UserContext";
 
 //#region Constants
 const SCHEMA = Joi.object({
@@ -86,6 +95,7 @@ const reduceUserInputState = (state, action) => {
 
 export default function Register() {
 	//#region hooks
+	const currentUser = useUser();
 	const [userInputState, dispatchUserInputState] = useReducer(
 		reduceUserInputState,
 		{
@@ -97,12 +107,13 @@ export default function Register() {
 			},
 		}
 	);
-	const [isError, setisError] = useState(false);
+	const [isError, setIsError] = useState(false);
 	const buttonRef = useRef();
 	const [data, , isLoading, rePost] = usePost(
 		"https://route-egypt-api.herokuapp.com/signin"
 	);
 	const navigate = useNavigate();
+	const setToken = useSetUserToken();
 
 	const isBlurredList = useMemo(
 		() => Object.values(userInputState.isBlurred),
@@ -122,11 +133,17 @@ export default function Register() {
 		if (!data) return;
 
 		if (data.message === "success") {
-			navigate("/home");
+			setToken(data.token);
 		} else {
-			setisError(true);
+			setIsError(true);
 		}
-	}, [data, navigate]);
+	}, [data, setToken]);
+
+	useEffect(() => {
+		if (currentUser) {
+			navigate("/home");
+		}
+	}, [currentUser, navigate]);
 	//#endregion
 
 	//#region functions
@@ -139,7 +156,7 @@ export default function Register() {
 
 	const inputHandler = (e) => {
 		updateInput(e.target.name, e.target.value);
-		setisError(false);
+		setIsError(false);
 	};
 
 	const submitHandler = (e) => {
@@ -153,52 +170,58 @@ export default function Register() {
 
 	return (
 		<>
-			<div className="row justify-content-center align-items-center min-vh-100">
-				<form onSubmit={submitHandler} className={`${styles.form}`} noValidate>
-					<div className="mb-3">
-						<input
-							value={userInputState.input[INPUT_NAMES.EMAIL]}
-							autoComplete="off"
-							onChange={inputHandler}
-							onBlur={inputHandler}
-							className={`form-control ${
-								userInputState.isBlurred[INPUT_NAMES.EMAIL] &&
-								(userInputState.error[INPUT_NAMES.EMAIL]
-									? "is-invalid"
-									: "is-valid")
-							}`}
-							type="email"
-							placeholder="Enter Your Email"
-							name="email"
-						/>
-					</div>
-					<div className="mb-3">
-						<input
-							value={userInputState.input[INPUT_NAMES.PASSWORD]}
-							autoComplete="off"
-							onChange={inputHandler}
-							onBlur={inputHandler}
-							className={`form-control ${
-								userInputState.isBlurred[INPUT_NAMES.PASSWORD] &&
-								(userInputState.error[INPUT_NAMES.PASSWORD]
-									? "is-invalid"
-									: "is-valid")
-							}`}
-							type="password"
-							placeholder="Enter Your Password"
-							name="password"
-						/>
-					</div>
-					<button
-						className="btn btn-dark w-100 text-main border-0 bg-sec"
-						type="submit"
-						ref={buttonRef}
-						disabled
+			<div className="container">
+				<div className="row justify-content-center align-items-center min-vh-100">
+					<form
+						onSubmit={submitHandler}
+						className={`${styles.form}`}
+						noValidate
 					>
-						{isLoading ? "Loading..." : "Sign In"}
-					</button>
-					{isError && <CustomAlert message={"Invalid Email or Password"} />}
-				</form>
+						<div className="mb-3">
+							<input
+								value={userInputState.input[INPUT_NAMES.EMAIL]}
+								autoComplete="off"
+								onChange={inputHandler}
+								onBlur={inputHandler}
+								className={`form-control ${
+									userInputState.isBlurred[INPUT_NAMES.EMAIL] &&
+									(userInputState.error[INPUT_NAMES.EMAIL]
+										? "is-invalid"
+										: "is-valid")
+								}`}
+								type="email"
+								placeholder="Enter Your Email"
+								name="email"
+							/>
+						</div>
+						<div className="mb-3">
+							<input
+								value={userInputState.input[INPUT_NAMES.PASSWORD]}
+								autoComplete="off"
+								onChange={inputHandler}
+								onBlur={inputHandler}
+								className={`form-control ${
+									userInputState.isBlurred[INPUT_NAMES.PASSWORD] &&
+									(userInputState.error[INPUT_NAMES.PASSWORD]
+										? "is-invalid"
+										: "is-valid")
+								}`}
+								type="password"
+								placeholder="Enter Your Password"
+								name="password"
+							/>
+						</div>
+						<button
+							className="btn btn-dark w-100 text-main border-0 bg-sec"
+							type="submit"
+							ref={buttonRef}
+							disabled
+						>
+							{isLoading ? "Loading..." : "Sign In"}
+						</button>
+						{isError && <CustomAlert message={"Invalid Email or Password"} />}
+					</form>
+				</div>
 			</div>
 		</>
 	);

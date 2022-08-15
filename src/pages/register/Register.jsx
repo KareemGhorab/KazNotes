@@ -2,7 +2,6 @@ import React, { useReducer, useEffect, useRef, useMemo } from "react";
 import Joi from "joi";
 import styles from "./Register.module.css";
 import CustomAlert from "../../components/alert/CustomAlert";
-import useFetch from "../../hooks/useFetch";
 import usePost from "../../hooks/usePost";
 import { useCallback } from "react";
 import { useState } from "react";
@@ -200,124 +199,132 @@ export default function Register() {
 
 	return (
 		<>
-			<div className="row justify-content-center align-items-center min-vh-100">
-				<form onSubmit={submitHandler} className={`${styles.form}`} noValidate>
-					<div className="row mb-3 gy-3">
-						<div className="col-md-6">
-							<input
-								value={userInputState.input[INPUT_NAMES.FIRST_NAME]}
-								autoComplete="off"
-								onChange={inputHandler}
-								onBlur={inputHandler}
-								className={`form-control ${
-									userInputState.isBlurred[INPUT_NAMES.FIRST_NAME] &&
-									(userInputState.error[INPUT_NAMES.FIRST_NAME]
-										? "is-invalid"
-										: "is-valid")
-								}`}
-								type="text"
-								placeholder="Enter First Name"
-								name="first_name"
-							/>
-							{userInputState.error[INPUT_NAMES.FIRST_NAME] && (
-								<CustomAlert
-									message={userInputState.error[INPUT_NAMES.FIRST_NAME]}
-								/>
-							)}
-						</div>
-						<div className="col-md-6">
-							<input
-								value={userInputState.input[INPUT_NAMES.LAST_NAME]}
-								autoComplete="off"
-								onChange={inputHandler}
-								onBlur={inputHandler}
-								className={`form-control ${
-									userInputState.isBlurred[INPUT_NAMES.LAST_NAME] &&
-									(userInputState.error[INPUT_NAMES.LAST_NAME]
-										? "is-invalid"
-										: "is-valid")
-								}`}
-								type="text"
-								placeholder="Enter Last Name"
-								name="last_name"
-							/>
-							{userInputState.error[INPUT_NAMES.LAST_NAME] && (
-								<CustomAlert
-									message={userInputState.error[INPUT_NAMES.LAST_NAME]}
-								/>
-							)}
-						</div>
-					</div>
-					<div className="mb-3">
-						<input
-							value={userInputState.input[INPUT_NAMES.EMAIL]}
-							autoComplete="off"
-							onChange={inputHandler}
-							onBlur={inputHandler}
-							className={`form-control ${
-								userInputState.isBlurred[INPUT_NAMES.EMAIL] &&
-								(userInputState.error[INPUT_NAMES.EMAIL]
-									? "is-invalid"
-									: "is-valid")
-							}`}
-							type="email"
-							placeholder="Enter Your Email"
-							name="email"
-						/>
-						{userInputState.error[INPUT_NAMES.EMAIL] && (
-							<CustomAlert message={userInputState.error[INPUT_NAMES.EMAIL]} />
-						)}
-					</div>
-					<div className="mb-3">
-						<input
-							value={userInputState.input[INPUT_NAMES.AGE]}
-							autoComplete="off"
-							onChange={inputHandler}
-							onBlur={inputHandler}
-							className={`form-control ${
-								userInputState.isBlurred[INPUT_NAMES.AGE] &&
-								(userInputState.error[INPUT_NAMES.AGE]
-									? "is-invalid"
-									: "is-valid")
-							}`}
-							type="number"
-							placeholder="Enter Your Age"
-							name="age"
-						/>
-						{userInputState.error[INPUT_NAMES.AGE] && (
-							<CustomAlert message={userInputState.error[INPUT_NAMES.AGE]} />
-						)}
-					</div>
-					<div className="mb-3">
-						<input
-							value={userInputState.input[INPUT_NAMES.PASSWORD]}
-							autoComplete="off"
-							onChange={inputHandler}
-							onBlur={inputHandler}
-							className={`form-control ${
-								userInputState.isBlurred[INPUT_NAMES.PASSWORD] &&
-								(userInputState.error[INPUT_NAMES.PASSWORD]
-									? "is-invalid"
-									: "is-valid")
-							}`}
-							type="password"
-							placeholder="Enter Your Password"
-							name="password"
-						/>
-						{userInputState.error[INPUT_NAMES.PASSWORD] && (
-							<CustomAlert message={PASSWORD_ERROR} />
-						)}
-					</div>
-					<button
-						className="btn btn-dark w-100 text-main border-0 bg-sec"
-						type="submit"
-						ref={buttonRef}
-						disabled
+			<div className="container">
+				<div className="row justify-content-center align-items-center min-vh-100">
+					<form
+						onSubmit={submitHandler}
+						className={`${styles.form}`}
+						noValidate
 					>
-						{isLoading ? "Loading..." : "Sign Up"}
-					</button>
-					{mainErrorMsg && <CustomAlert message={mainErrorMsg} />}
-				</form>
+						<div className="row mb-3 gy-3">
+							<div className="col-md-6">
+								<input
+									value={userInputState.input[INPUT_NAMES.FIRST_NAME]}
+									autoComplete="off"
+									onChange={inputHandler}
+									onBlur={inputHandler}
+									className={`form-control ${
+										userInputState.isBlurred[INPUT_NAMES.FIRST_NAME] &&
+										(userInputState.error[INPUT_NAMES.FIRST_NAME]
+											? "is-invalid"
+											: "is-valid")
+									}`}
+									type="text"
+									placeholder="Enter First Name"
+									name="first_name"
+								/>
+								{userInputState.error[INPUT_NAMES.FIRST_NAME] && (
+									<CustomAlert
+										message={userInputState.error[INPUT_NAMES.FIRST_NAME]}
+									/>
+								)}
+							</div>
+							<div className="col-md-6">
+								<input
+									value={userInputState.input[INPUT_NAMES.LAST_NAME]}
+									autoComplete="off"
+									onChange={inputHandler}
+									onBlur={inputHandler}
+									className={`form-control ${
+										userInputState.isBlurred[INPUT_NAMES.LAST_NAME] &&
+										(userInputState.error[INPUT_NAMES.LAST_NAME]
+											? "is-invalid"
+											: "is-valid")
+									}`}
+									type="text"
+									placeholder="Enter Last Name"
+									name="last_name"
+								/>
+								{userInputState.error[INPUT_NAMES.LAST_NAME] && (
+									<CustomAlert
+										message={userInputState.error[INPUT_NAMES.LAST_NAME]}
+									/>
+								)}
+							</div>
+						</div>
+						<div className="mb-3">
+							<input
+								value={userInputState.input[INPUT_NAMES.EMAIL]}
+								autoComplete="off"
+								onChange={inputHandler}
+								onBlur={inputHandler}
+								className={`form-control ${
+									userInputState.isBlurred[INPUT_NAMES.EMAIL] &&
+									(userInputState.error[INPUT_NAMES.EMAIL]
+										? "is-invalid"
+										: "is-valid")
+								}`}
+								type="email"
+								placeholder="Enter Your Email"
+								name="email"
+							/>
+							{userInputState.error[INPUT_NAMES.EMAIL] && (
+								<CustomAlert
+									message={userInputState.error[INPUT_NAMES.EMAIL]}
+								/>
+							)}
+						</div>
+						<div className="mb-3">
+							<input
+								value={userInputState.input[INPUT_NAMES.AGE]}
+								autoComplete="off"
+								onChange={inputHandler}
+								onBlur={inputHandler}
+								className={`form-control ${
+									userInputState.isBlurred[INPUT_NAMES.AGE] &&
+									(userInputState.error[INPUT_NAMES.AGE]
+										? "is-invalid"
+										: "is-valid")
+								}`}
+								type="number"
+								placeholder="Enter Your Age"
+								name="age"
+							/>
+							{userInputState.error[INPUT_NAMES.AGE] && (
+								<CustomAlert message={userInputState.error[INPUT_NAMES.AGE]} />
+							)}
+						</div>
+						<div className="mb-3">
+							<input
+								value={userInputState.input[INPUT_NAMES.PASSWORD]}
+								autoComplete="off"
+								onChange={inputHandler}
+								onBlur={inputHandler}
+								className={`form-control ${
+									userInputState.isBlurred[INPUT_NAMES.PASSWORD] &&
+									(userInputState.error[INPUT_NAMES.PASSWORD]
+										? "is-invalid"
+										: "is-valid")
+								}`}
+								type="password"
+								placeholder="Enter Your Password"
+								name="password"
+							/>
+							{userInputState.error[INPUT_NAMES.PASSWORD] && (
+								<CustomAlert message={PASSWORD_ERROR} />
+							)}
+						</div>
+						<button
+							className="btn btn-dark w-100 text-main border-0 bg-sec"
+							type="submit"
+							ref={buttonRef}
+							disabled
+						>
+							{isLoading ? "Loading..." : "Sign Up"}
+						</button>
+						{mainErrorMsg && <CustomAlert message={mainErrorMsg} />}
+					</form>
+				</div>
 			</div>
 		</>
 	);
