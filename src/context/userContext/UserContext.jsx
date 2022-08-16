@@ -14,13 +14,13 @@ export const useSetUserToken = () => useContext(SetUserTokenContext);
 export const useLogout = () => useContext(LogoutContext);
 
 export const UserProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState({ user: null, token: "" });
 	const [storedToken, setStoredToken] = useLocalStorage(KEY, "");
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!storedToken) {
-			setUser("");
+			setUser({ user: null, token: "" });
 			return;
 		}
 		setUser(jwtDecode(storedToken));
@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
 	};
 
 	return (
-		<UserContext.Provider value={user}>
+		<UserContext.Provider value={{ user, token: storedToken }}>
 			<SetUserTokenContext.Provider value={setStoredToken}>
 				<LogoutContext.Provider value={logout}>
 					{children}

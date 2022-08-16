@@ -7,7 +7,7 @@ function Modal({
 
 	titleInput,
 	descInput,
-	onInput,
+	inputHandler,
 
 	onSubmit,
 	onCancel,
@@ -29,7 +29,7 @@ function Modal({
 						name="title"
 						type="text"
 						value={titleInput}
-						onChange={onInput}
+						onChange={inputHandler}
 						placeholder="Title"
 					/>
 					<textarea
@@ -38,14 +38,19 @@ function Modal({
 						cols="30"
 						rows="10"
 						value={descInput}
-						onChange={onInput}
+						onChange={inputHandler}
 						placeholder="Description"
 					></textarea>
 				</Card.Text>
 				<footer className="d-flex justify-content-end">
-					<button className="btn btn-info text-light me-3" onClick={onSubmit}>
+					<button
+						type="submit"
+						className="btn btn-info text-light me-3"
+						onClick={onSubmit}
+					>
 						{submitBtnText || "Submit"}
 					</button>
+
 					<button className="btn btn-danger text-light" onClick={onCancel}>
 						Cancel
 					</button>

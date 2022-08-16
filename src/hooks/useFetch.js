@@ -7,10 +7,10 @@ const useFetch = (url) => {
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const fetchApi = useCallback(() => {
+	const fetchApi = useCallback((options) => {
 		setIsLoading(true);
 		axios
-			.get(url)
+			.get(url, options)
 			.then(({ data }) => {
 				setData(data);
 			})

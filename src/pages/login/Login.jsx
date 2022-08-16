@@ -140,10 +140,10 @@ export default function Register() {
 	}, [data, setToken]);
 
 	useEffect(() => {
-		if (currentUser) {
+		if (currentUser.user) {
 			navigate("/home");
 		}
-	}, [currentUser, navigate]);
+	}, [currentUser.user, navigate]);
 	//#endregion
 
 	//#region functions
