@@ -8,13 +8,17 @@ import { useUser } from "./context/userContext/UserContext";
 
 const LoggedInUserRoute = ({ children }) => {
 	const user = useUser();
-	if (!user.user) return <Navigate to="/login" />;
+	if (!user) {
+		return <Navigate to="/login" />;
+	}
 	return <>{children}</>;
 };
 
 const GuestUser = ({ children }) => {
 	const user = useUser();
-	if (user.user) return <Navigate to="/home" />;
+	if (user) {
+		return <Navigate to="/home" />;
+	}
 	return <>{children}</>;
 };
 

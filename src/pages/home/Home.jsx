@@ -3,9 +3,13 @@ import styles from "./Home.module.css";
 import Modal from "../../components/modal/Modal";
 import Backdrop from "../../components/backdrop/Backdrop";
 import usePost from "../../hooks/usePost";
+import useDelete from "../../hooks/useDelete";
+import usePut from "../../hooks/usePut";
 import useFetch from "../../hooks/useFetch";
-import { useUser } from "../../context/userContext/UserContext";
+import { useToken, useUser } from "../../context/userContext/UserContext";
 import Note from "../../components/note/Note";
+import { useRef } from "react";
+import { useMemo } from "react";
 
 const DEFAULT_INPUT_STATE = {
 	note: {
@@ -16,14 +20,16 @@ const DEFAULT_INPUT_STATE = {
 		modalTitle: "",
 		submitBtnText: "",
 	},
+	new: false,
 };
 
 export default function Home() {
 	const currentUser = useUser();
-	const [input, setInput] = useState({ ...DEFAULT_INPUT_STATE });
+	const userToken = useToken();
+	const [input, setInput] = useState(() => ({ ...DEFAULT_INPUT_STATE }));
 	const [isInputting, setIsInputting] = useState(false);
-	const [notes, setNotes] = useState([]);
-	const [, , isLoadingNewNote, postNewNote] = usePost(
+	const [notes, setNotes] = useState(() => []);
+	const [noteAddedData, , isLoadingNewNote, postNewNote] = usePost(
 		"https://route-egypt-api.herokuapp.com/addNote"
 	);
 	const [notesData, , isLoadingNotesData, fetchNotesData] = useFetch(
@@ -33,18 +39,16 @@ export default function Home() {
 	useEffect(() => {
 		fetchNotesData({
 			headers: {
-				Token: currentUser.token,
-				userID: currentUser.user._id,
+				Token: userToken,
+				userID: currentUser._id,
 			},
 		});
-		console.log("Initial fetch");
-	}, [fetchNotesData]);
+	}, [currentUser._id, userToken, fetchNotesData, noteAddedData]);
+
 	useEffect(() => {
-		console.log(notesData);
-		if (!notesData?.Notes) {
+		if (notesData?.message !== "success") {
 			return;
 		}
-		console.log("Notes fetch");
 		setNotes(
 			notesData.Notes.map((element) => ({
 				id: element._id,
@@ -66,21 +70,22 @@ export default function Home() {
 
 	const submitHandler = (e) => {
 		e.preventDefault();
-		setNotes((prevNotes) => [...prevNotes, input.note]);
+		setIsInputting(false);
+		setInput((prevInput) => ({ ...prevInput, new: !prevInput.new }));
 	};
+
 	useEffect(() => {
 		if (!input.note.title) {
 			return;
 		}
+		console.log("post");
 		postNewNote({
 			title: input.note.title,
 			desc: input.note.desc,
-			userID: currentUser.user._id,
-			token: currentUser.token,
+			userID: currentUser._id,
+			token: userToken,
 		});
-
-		setIsInputting(false);
-	}, [currentUser.user._id, currentUser.token, notes, postNewNote]);
+	}, [input.new, postNewNote, currentUser._id, userToken]);
 
 	const addNewNoteBtnHandler = () => {
 		setInput((prevState) => ({
@@ -91,6 +96,7 @@ export default function Home() {
 			},
 		}));
 	};
+
 	useEffect(() => {
 		if (input.modalConfig.modalTitle) {
 			setIsInputting(true);
@@ -100,6 +106,7 @@ export default function Home() {
 	const cancelHandler = () => {
 		setIsInputting(false);
 	};
+
 	useEffect(() => {
 		if (!isInputting) {
 			setInput({ ...DEFAULT_INPUT_STATE });
@@ -131,13 +138,25 @@ export default function Home() {
 							Add note
 						</button>
 					</div>
-					<div className="row gy-4 mt-4">
-						{notes.map((element, index) => (
-							<div className="col-lg-3">
-								<Note key={index} title={element.title} desc={element.desc} />
-							</div>
-						))}
-					</div>
+					{isLoadingNotesData ? (
+						<div className="d-flex justify-content-center">
+							<div className="h1">Loading...</div>
+						</div>
+					) : (
+						<div className="row gy-4 mt-4">
+							{notes.map((element) => {
+								return (
+									<div className="col-md-3" key={element.id}>
+										<Note
+											title={element.title}
+											desc={element.desc}
+											id={element.id}
+										/>
+									</div>
+								);
+							})}
+						</div>
+					)}
 				</div>
 			</main>
 		</>
